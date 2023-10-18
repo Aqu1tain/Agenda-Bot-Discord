@@ -1,4 +1,4 @@
-#Agenda Bot Discord
+# Agenda Bot Discord
 Pour configurer ce bot :
 - Créer un bot discord sur le portail développeur
 - Uploader les fichiers sur Repl.it
