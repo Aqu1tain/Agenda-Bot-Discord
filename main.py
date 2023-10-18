@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 from icalendar import Calendar
 from config import TOKEN, CHANNEL_ID
 from keep_alive import keep_alive
+import csv
 
 keep_alive(
 )  # Fonction qui appelle UptimeRobot, pour forcer le Bot à être online h24
@@ -33,6 +34,41 @@ async def datecommand(ctx):
   todaydate = date.today()
   d1 = todaydate.strftime("%d/%m/%Y")
   await ctx.send('Nous sommes le ' + str(d1))
+
+
+@client.command(
+    name="medias",
+    description="Vous renvoie tous les médias conseillés pendant l\'année")
+async def mediacommand(ctx):
+  embedVar = discord.Embed(
+      title="Medias conseillés",
+      description="Vous renvoie tous les médias conseillés pendant l\'année",
+      color=0x3853B4)
+  with open('CSV_Files/medias.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',')
+    for row in reader:
+      for film in row:
+        embedVar.add_field(name='',
+                           value='**' + str(film) + '**',
+                           inline=False)
+
+  await ctx.send(embed=embedVar)
+
+
+@client.command(
+    name="addmedia",
+    description="Vous renvoie tous les médias conseillés pendant l\'année")
+async def addmediacommand(ctx, nom='NO MEDIA'):
+  embedVar = discord.Embed(title="Ajouter un media",
+                           description="Vous Avez ajouté le media :" + nom,
+                           color=0x3853B4)
+  if nom != 'NO MEDIA':
+    with open('CSV_Files/medias.csv', a, newline='') as csvfile:
+      writer = csv.writer(csvfile, delimiter=',')
+      writer.writerow([str(nom)])
+    ctx.send(embedVar)
+  else:
+    return
 
 
 @client.command(name="cours",
@@ -112,6 +148,12 @@ async def help_command(ctx):
       value=
       'Afficher les cours pour aujourd\'hui, demain ou une date spécifique',
       inline=False)
+  embedVar.add_field(name='$medias',
+                     value='Obtenir les médias conseillés existants',
+                     inline=False)
+  embedVar.add_field(name='$addmedia',
+                     value='Ajouter un média conseillé',
+                     inline=False)
   await ctx.send(embed=embedVar)
 
 
