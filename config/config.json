@@ -1,0 +1,9 @@
+{
+    "config" : {
+        "_comment_" : "Discord bot config",
+        "language" : "english",
+        "moderator_role" : "@everyone",
+        "TOKEN" : "PASTE YOUR BOT TOKEN HERE",
+        "CHANNEL_ID" : "PASTE YOUR BOT CHANNEL ID HERE"
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "languages" : {
+        "english" : "anglais",
+        "french" : "français"
+    },
+    "titles" : {
+        "language" : "langue",
+        "Incorrect date format" : "Format de date incorrect",
+        "Incorrect language" : "Langue incorrecte",
+        "Room": "Salle",
+        "Teacher": "Formateur",
+        "Hours" : "Horaires",
+        "Language set" : "Langue configuree",
+        "Moderator role set" : "Role moderateur configure",
+        "Help" : "Aide"
+    },
+    "descriptions" : {
+        "Language set to" : "Langue configuree sur",
+        "Moderator role set to" : "Role moderateur configure sur",
+        "The commands are :" : "Les commandes sont :"
+    },
+    "commands" : {
+        "course" : "cours",
+        "test" : "test",
+        "set_language" : "set_language"
+    },
+    "arguments" : {
+        "today" : "aujourd'hui",
+        "tomorrow" : "demain",
+        "week" : "semaine",
+        "month" : "mois",
+        "year" : "annee",
+        "yesterday" : "hier"
+    },
+    "errors" : {
+        "The date format is incorrect. Please use the format DD/MM/YYYY. For other arguments, please refer to the help command." : "Le format de date est incorrect. Veuillez utiliser le format DD/MM/YYYY. Pour d’autres arguments, veuillez consulter la commande d'aide : $help",
+        "That language is not supported. Supported languages are" : "Ce langage n'est pas supporté. Les langages supportés sont"        
+    }
+}
