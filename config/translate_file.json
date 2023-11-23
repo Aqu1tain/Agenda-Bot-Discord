@@ -12,12 +12,16 @@
         "Hours" : "Horaires",
         "Language set" : "Langue configuree",
         "Moderator role set" : "Role moderateur configure",
-        "Help" : "Aide"
+        "Help" : "Aide",
+        "No events scheduled for this day.": "Aucun événement planifie pour ce jour.",
+        "Weekly schedule" : "Horaires hebdomadaires"
     },
     "descriptions" : {
         "Language set to" : "Langue configuree sur",
         "Moderator role set to" : "Role moderateur configure sur",
-        "The commands are :" : "Les commandes sont :"
+        "The commands are :" : "Les commandes sont :",
+        "No more courses for this week." : "Aucun autre cours pour cette semaine.",
+        "Here is the weekly schedule :" : "Voici le calendrier de la semaine :"
     },
     "commands" : {
         "course" : "cours",
@@ -35,5 +39,14 @@
     "errors" : {
         "The date format is incorrect. Please use the format DD/MM/YYYY. For other arguments, please refer to the help command." : "Le format de date est incorrect. Veuillez utiliser le format DD/MM/YYYY. Pour d’autres arguments, veuillez consulter la commande d'aide : $help",
         "That language is not supported. Supported languages are" : "Ce langage n'est pas supporté. Les langages supportés sont"        
+    },
+    "days_of_week" : {
+        "Monday" : "Lundi",
+        "Tuesday" : "Mardi",
+        "Wednesday" : "Mercredi",
+        "Thursday" : "Jeudi",
+        "Friday" : "Vendredi",
+        "Saturday" : "Samedi",
+        "Sunday" : "Dimanche"
     }
 }

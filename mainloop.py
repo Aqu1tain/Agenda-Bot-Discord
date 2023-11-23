@@ -71,12 +71,16 @@ def setup_bot():
             for event in ics.walk('VEVENT'):
                 if event['dtstart'].dt.date() == command_date:
                     embedVar = discord.Embed(
-                        title=event['summary'],
-                        description= str(translate(LANGUAGE, 'titles', "Room") + ": **" + event['location'] + "**\n"+translate(LANGUAGE, 'titles', "Teacher")+" : **" + event['prof'] + "**\n"+""+translate(LANGUAGE, 'titles', "Hours")+" : **" + event['dtstart'].dt.strftime("%H:%M") + " - " + event['dtend'].dt.strftime("%H:%M") + "**").replace("Fr�d�ric", "Frédéric").replace("J�r�me","Jérôme"),
-                        color=0x3853B4)
+                        title=f":book: {event['summary']} :book:",  # Emoji added here
+                        description=str(
+                            f":round_pushpin: {translate(LANGUAGE, 'titles', 'Room')}: **{event['location']}**\n"
+                            f":man_teacher: {translate(LANGUAGE, 'titles', 'Teacher')}: **{event['prof']}**\n"
+                            f":alarm_clock: {translate(LANGUAGE, 'titles', 'Hours')}: **{event['dtstart'].dt.strftime('%H:%M')} - {event['dtend'].dt.strftime('%H:%M')}**"
+                        ).replace("Fr�d�ric", "Frédéric").replace("J�r�me", "Jérôme"),
+                        color=0x3853B4
+                    )
                     await ctx.send(embed=embedVar)
     @bot.command(aliases=['slg'])
-    @commands.has_role(MODERATOR_ROLE)
     async def set_language(ctx, arg="english"):
         """
         Sets the language for the bot.
@@ -91,25 +95,36 @@ def setup_bot():
         Raises:
             None
         """
-        if arg == "fr": 
-            arg = "french"
-        elif arg == "en": 
-            arg = "english"
-        if arg in LANGUAGES_LIST:
-            global LANGUAGE
-            LANGUAGE = arg
-            change_language(arg)
-            embedVar = discord.Embed(
-                title=translate(LANGUAGE, 'titles', "Language set"),
-                description= translate(LANGUAGE, 'descriptions', "Language set to") +  f" {translate(LANGUAGE, 'languages', LANGUAGE)}",
-            )
-            await ctx.send(embed=embedVar)
+        user = ctx.message.author
+        role = discord.utils.find(lambda r: r.id == MODERATOR_ROLE, ctx.message.guild.roles)
+        if role in user.roles:
+            if arg == "fr": 
+                arg = "french"
+            elif arg == "en": 
+                arg = "english"
+            if arg in LANGUAGES_LIST:
+                global LANGUAGE
+                LANGUAGE = arg
+                change_language(arg)
+                embedVar = discord.Embed(
+                title=f":globe_with_meridians: {translate(LANGUAGE, 'titles', 'Language set')} :globe_with_meridians:",  # Emoji added here
+                    description=translate(LANGUAGE, 'descriptions', "Language set to")
+                    + f" {translate(LANGUAGE, 'languages', LANGUAGE)}",
+                )
+                await ctx.send(embed=embedVar)
+            else:
+                embedVar = discord.Embed(
+                    title=translate(LANGUAGE, 'titles', "Incorrect language"),
+                    description= translate(LANGUAGE, 'errors', f"That language is not supported. Supported languages are") + f" {LANGUAGES_LIST}",
+                )
+                await ctx.send(embed=embedVar)
         else:
             embedVar = discord.Embed(
-                title=translate(LANGUAGE, 'titles', "Incorrect language"),
-                description= translate(LANGUAGE, 'errors', f"That language is not supported. Supported languages are") + f" {LANGUAGES_LIST}",
+                title=translate(LANGUAGE, 'titles', "Permissions required"),
+                description= translate(LANGUAGE, 'errors', f"You need to be a moderator to use this command."),
             )
             await ctx.send(embed=embedVar)
+        
     
     @bot.command(aliases=['smdrl'])
     @commands.has_permissions(administrator=True)
@@ -127,8 +142,9 @@ def setup_bot():
         MODERATOR_ROLE = role.id
         change_moderator_role(role.id)
         embedVar = discord.Embed(
-            title=translate(LANGUAGE, 'titles', "Moderator role set"),
-            description=translate(LANGUAGE, 'descriptions', "Moderator role set to") + f" {role.name}",
+            title=f":shield: {translate(LANGUAGE, 'titles', 'Moderator role set')} :shield:",  # Emoji added here
+            description=translate(LANGUAGE, 'descriptions',
+                                  "Moderator role set to") + f" {role.name}",
         )
         await ctx.send(embed=embedVar)
 
@@ -144,13 +160,68 @@ def setup_bot():
             None
         """
         embedVar = discord.Embed(
-            title=translate(LANGUAGE, 'titles', "Help"),
-            description= translate(LANGUAGE, 'descriptions', "The commands are :"),
+            title=f":information_source: {translate(LANGUAGE, 'titles', 'Help')} :information_source:",  # Emoji added here
+            description=translate(LANGUAGE, 'descriptions', "The commands are :"),
         )
         for command in bot.commands:
-            embedVar.add_field(name=command.name, value=command.help, inline=False)
-        embedVar.set_footer(text=translate(LANGUAGE, 'descriptions', "For other arguments, please refer to the help command."))
+            embedVar.add_field(name=f":wrench: {command.name}", value=command.help, inline=False)  # Emoji added here
+        embedVar.set_footer(text=translate(
+            LANGUAGE, 'descriptions',
+            "For other arguments, please refer to the help command."))
         await ctx.send(embed=embedVar)
+   
+    @bot.command(aliases=['w', 'weekly', 'semaine'])
+    async def week(ctx, num_weeks: int = 0):
+        """
+        A function that represents a weekly command for the bot.
+    
+        Parameters:
+            ctx (Context): The context of the command.
+            num_weeks (int): The number of weeks in the future. Default is 0.
+    
+        Returns:
+            None
+        """
+        with open(CALENDAR_PATH, 'r') as calendar_file:
+            ics = Calendar.from_ical(calendar_file.read())
+            embedVar = discord.Embed(
+                title=f":calendar: {translate(LANGUAGE, 'titles', 'Weekly schedule')} :calendar:",
+                description=translate(LANGUAGE, 'descriptions', "Here is the weekly schedule :"),
+                color=0x3853B4
+            )
+            today = datetime.today().date()
+            monday = today - timedelta(days=today.weekday()) + timedelta(weeks=num_weeks)
+            sunday = monday + timedelta(days=6)
+            days_of_week = [
+                translate(LANGUAGE, 'days_of_week', 'Monday'),
+                translate(LANGUAGE, 'days_of_week', 'Tuesday'),
+                translate(LANGUAGE, 'days_of_week', 'Wednesday'),
+                translate(LANGUAGE, 'days_of_week', 'Thursday'),
+                translate(LANGUAGE, 'days_of_week', 'Friday'),
+                translate(LANGUAGE, 'days_of_week', 'Saturday'),
+                translate(LANGUAGE, 'days_of_week', 'Sunday')
+            ]
+            has_events = False
+    
+            for day in range(7):
+                day_schedule = ""
+                day_date = monday + timedelta(days=day)
+                for event in ics.walk('VEVENT'):
+                    if event['dtstart'].dt.date() == day_date:
+                        day_schedule += f"**{event['summary']}** - {event['dtstart'].dt.strftime('%H:%M')}\n"
+                        has_events = True
+                if day_schedule == "":
+                    day_schedule = translate(LANGUAGE, 'titles', 'No events scheduled for this day.')
+                embedVar.add_field(name=days_of_week[day], value=day_schedule, inline=False)
+    
+            if not has_events:
+                if today.weekday() == 6:
+                    embedVar.add_field(name=translate(LANGUAGE, 'titles', 'Weekly Schedule'), value=translate(LANGUAGE, 'descriptions', 'No more courses for this week.'), inline=False)
+                else:
+                    embedVar.add_field(name=translate(LANGUAGE, 'titles', 'Weekly Schedule'), value=translate(LANGUAGE, 'descriptions', 'No events scheduled for this week.'), inline=False)
+    
+            await ctx.send(embed=embedVar)
+            
     return bot
 
 def mainloop():
